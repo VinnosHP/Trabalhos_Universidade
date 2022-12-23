@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1638383763 source:c:\users\acer\documents\facul\2 periodo\algo. prog\trab m3\trab m3\main.cpp
+	<iostream>
+	<cstring>
+	<iomanip>
+
