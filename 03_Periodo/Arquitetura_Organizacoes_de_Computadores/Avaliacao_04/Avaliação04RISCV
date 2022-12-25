@@ -1,0 +1,127 @@
+# Disciplina: Arquitetura e Organização de Processadores
+# Atividade: Avaliação 04 – Programação em Linguagem de Montagem
+# Alunos: Igor do Carmo e Vinicius Hostins Pereira.
+	.data
+VetorA: 	.word 0,0,0,0,0,0,0,0
+leiaA: 		.asciz "Entre com A["
+espaço: 	.asciz "\n"
+colchetes: 	.asciz "]: "
+ValorVetor: 	.asciz "qual o tamanho do vetor ? (1-8)"
+Erro: 		.asciz "Você so pode adicionar valores de 1 até 8."
+msg_vet: 	.asciz "A["
+	.text 
+	j main
+BUBBLESORT:
+	addi sp, sp, -16
+	sw a0, 12(sp)
+	sw a1, 8(sp)
+	sw t0, 4(sp)
+	sw t1, 0(sp)
+	
+	li t0, 1
+while:
+	bne t0, s11, end_while
+	li t0, 0
+	mv t1, zero
+for:
+	add t2, t1, t1
+	add t2, t2, t2
+	add t2, t2, a1
+	lw t3, 0(t2)
+			
+	addi t4 , t1, 1
+	add t4, t4, t4
+	add t4, t4, t4
+	add t4, t4, a1
+	lw  t5, 0(t4)
+			
+	slt t6, t3, t5
+	beq t6, s11, end_for
+	beq t3, t5, end_for
+			
+	li t0, 1
+	sw t5, 0(t2)
+	sw t3, 0(t4)
+end_for:
+	addi t1, t1, 1
+	addi t2, a0, -1
+	slt  t2, t1, t2
+	beq t2, s11, for
+	j while
+end_while:
+	lw t1, 0(sp)
+	lw t0, 4(sp)
+	lw a1, 8(sp)
+	lw a0, 12(sp)
+	addi sp, sp, 16
+	jr ra
+	
+main:
+	la s0, VetorA
+	li t0, 0        # i.
+	li t1, 1
+	li s1, 8	# tamanho maximo vetor
+tamanhoVetor:
+	li a7, 4		# chama serviço 4
+	la a0, ValorVetor
+	ecall
+	li a7, 5		# chama serviço 5
+	ecall
+	mv s2, a0
+	blt s2, t1, erro
+	bgt s2, s1, erro
+	j loopA
+erro:
+	li a7, 4	# chama serviço 4
+	la a0, Erro
+	ecall
+	j tamanhoVetor
+loopA:
+	li a7, 4	# chama serviço 4
+	la a0, leiaA
+	ecall
+	li a7, 1	# chama serviço 1
+	mv a0, t0
+	ecall
+	li a7 4		# chama serviço 4
+	la a0, colchetes
+	ecall
+	li a7, 5	# chama serviço 5
+	ecall
+	mv s3, a0
+	add t1, t0, t0
+	add t1, t1, t1
+	add t1, t1, s0
+	sw s3, 0(t1)
+	addi t0, t0, 1
+	bne t0, s2, loopA
+	
+	add a0, zero, s2
+	add a1, zero, s0
+	li s11, 1
+	jal BUBBLESORT
+	li t0, 0
+mostraVet:
+	add t1, t0, t0
+	add t1, t1, t1
+	add t1, t1, s0
+	lw s3, 0(t1)
+	li a7, 4	# chama serviço 4
+	la a0, msg_vet
+	ecall
+	li a7, 1	# chama serviço 1
+	mv a0, t0
+	ecall
+	li a7 ,4	# chama serviço 4	
+	la a0, colchetes
+	ecall
+	li a7, 1	# chama serviço 1
+	mv a0, s3
+	ecall
+	addi t0, t0, 1
+	beq t0, s2, exit
+	li a7, 4	# chama serviço 4
+	la a0, espaço
+	ecall
+	j mostraVet
+exit:  nop

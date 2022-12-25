@@ -1,0 +1,59 @@
+# Disciplina: Arquitetura e Organização de Processadores
+# Atividade: Avaliação 03 – Procedimentos em Linguagem de Montagem
+# Exercício 03
+# Alunos: Igor do Carmo
+#         Vinicius Hostins Pereira
+	.data
+Vetor_A:	.word 0,0,0,0,0,0,0,0
+msg_Vetor:	.asciz "A["
+Colchetes:	.asciz "]: "
+msg_Vet:	.asciz "Quantidades de zeros no vetor: "
+	.text  
+	la s0, Vetor_A
+	li s2, 0             # define s2 = 0
+	li t3, 8             # define t3 = 8
+LoopA:
+	li a7, 4 		# chama serviço 4
+	la a0, msg_Vetor	# mostra mensagem 'msg_Vetor'
+	ecall
+	li a7, 1		# chama serviço 1
+	mv a0, s2		# mostra inteiro na tela
+	ecall
+	li a7 4			# chama serviço 4
+	la a0, Colchetes	# mostra mensagem 'Colchetes'
+	ecall
+	li a7, 5		# chama serviço 5
+	ecall 
+	mv s4, a0		# salva o inteiro informado em s4.
+    
+	add s3, s2, s2		# soma s2 + s2, e salva em s3
+	add s3, s3, s3		# soma s3 + s3, e salva em s3
+	add s3, s3, s0		# soma s3 + s0(endereço base), e salva em s3
+	sw s4, 0(s3)		# armazena o valor de s4 no enderço 0(s3)
+	addi s2, s2, 1		# soma s2 + 1, e salva em s2
+    
+	beq s2, t3, main	#se o valor de i for igual 7 
+	j LoopA
+Verifica:
+	add a0, zero, s2	# soma zero + s2, e salva em a0
+	Loop:
+	add a3, a0, a0		# soma a0 + a0, e salva em a3
+	add a3, a3, a3		# soma a3 + a3, e salva em a3
+	add a3, a3, s0		# soma a3 + s0(endereço base), e salva em a3
+	lw a1, 0(a3)		# carrega o valor que esta no endereço 0(a3), em a1
+	addi a0, a0, 1		# soma a0 + 1, e salva em a0
+	slti a7, a1, 1
+	addi a7, a7, 0		# soma a7 + 1, e salva em a7
+	bne a0, t3, Loop	# se o valor do a0 for diferente do valor do t3, vai para o label 'loop'
+	jr ra			# retorna para o main
+main:
+	li s2, 0		# define s2 = 0
+	li a7, 0		# define a7 = 0
+	jal Verifica		# vai para o label 'Verifica'
+	add t1, zero, a7	# soma zero + a7, e salva em t1
+	li a7, 4		# chama serviço 4
+	la a0, msg_Vet		# mostra a mensagem 'msg_Vet'
+	ecall
+	li a7, 1		# chama serviço 1
+	mv a0, t1		# mostra inteiro na tela
+	ecall

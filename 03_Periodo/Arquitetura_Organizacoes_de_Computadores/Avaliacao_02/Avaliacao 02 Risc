@@ -1,0 +1,107 @@
+	.data
+VetorA: 	.word 0,0,0,0,0,0,0,0
+VetorB: 	.word 0,0,0,0,0,0,0,0
+VetorC: 	.word 0,0,0,0,0,0,0,0
+leiaA:		.asciz "Entre com A["
+leiaB: 		.asciz "Entre com B["
+espaço: 	.asciz ""
+colchetes: 	.asciz "]: "
+mostraC: 	.asciz "\n C["
+	.text 
+
+main:
+	la s0, VetorA
+	la t0, VetorB
+	la t1, VetorC		# ==
+	li s2, 0 		# isso é a soma do i.
+	li t2, 8 		# isso é o valor maximo (n di for).
+
+loopA:
+	li a7, 4		# chama serviço 4.
+	la a0, leiaA		# carrega a mensagem 'leiaA' na tela.
+	ecall
+	li a7, 1		# chama serviço 1.
+	mv a0, s2		# carrega o numero na tela
+	ecall
+	li a7 4			# chama serviço 4.
+	la a0, colchetes 	# carrega a mensagem 'colchetes' na tela.
+	ecall
+	add v1, s2, s2		# soma $s2 + $s2 e armazena em $v1
+	add v1, v1, v1  	# soma do relativo com o absolut e base.
+	add v1, v1, s0		# soma $v1 + $s0 e armazena em $v1
+	lw s1, 0(v1)		# 
+	li a7, 5  		# para escrever o valor do vetor. 
+	ecall
+	mv s3, a7		# armazena o valor informado em $s3
+	sw s3, 0(v1) 		# soma o valor do vetor.
+	addi s2, s2, 1   	# soma $s2 + 1 e armazena em $s2
+	bne s2, t2, loopA 	# faz oq o beq e o junp faz.
+
+	li s2, 0 		# volta o valor de i para 0.
+
+	li a7, 4		# chama serviço 4
+	la a0, espaço		# carrega a mensagem 'espaço' na tela
+	ecall
+
+loopB:
+	li a7, 4		# chama serviço 4
+	la a0, leiaB 		# carrega a mensagem 'leiaB' na tela
+	ecall
+	li a7, 1		# chama serviço 1
+	mv a0, s2		# carrega inteiro na tela
+	ecall
+	li a7, 4		# chama serviço 4
+	la a0, colchetes 	# carregar os colchetes para fechar o vetor.
+	ecall
+	add v1, s2, s2		# soma $s2 + $s2 e armazena em $v1
+	add v1, v1, v1  	# soma do relativo com o absolut e base.
+	add v1, v1, t0		# soma $v1 + $t0 e armazena em $v1
+	lw s1, 0(v1)		# carrega o que esta no endereço 0($v1) e armazena em $s1
+	li a7, 5  		# chama serviço 5
+	ecall
+	mv s3, a7		# armazena inteiro informado para $s3
+	sw s3, 0(v1) 		# salva o que esta em $s3 no endereço 0($v1)
+	addi s2, s2, 1   	# soma $s2 + 1 e armazena em $s2
+	bne s2, t2, loopB 	# se o valor de $s2 for diferente de $t2 vai para o label 'loopB'
+
+	li s2, 0 		# define o valor que esta em $s2 como 0
+
+loopC:
+	add v1, s2, s2		# soma $s2 + $s2 e armazena em $v1
+	add v1, v1, v1  	# soma do relativo com o absolut e base.
+	add v1, v1, s0		# soma $v1 + $s0 e armazena em $v1
+	lw s1, 0(v1)		# carrega o que esta no endereço 0($v1) e armazena em $s1
+	add s5, s2, s2		# soma $s2 + $s2 e armazena em $s5
+	add s5, s5, s5  	# soma do relativo com o absolut e base.
+	add s5, s5, t0		# soma $s5 + $t0 e armazena em $s5
+	lw s6, 0(s5)		# carrega o que esta  no enderço 0($s5) e armazena em $s6
+	slt s4, s1, s6 		# se $s1 for menor que $s6, entao $s4 = 1, senao $s4 = 0.
+	add s7, s2, s2		# soma $s2 + $s2 e armazena em $s7
+	add s7, s7, s7  	# soma do relativo com o absolut e base.
+	add s7, s7, $t1		# soma $s7 + $t1 e armazena em $s7 ==
+	bne s4, 0, loopFinal	# se o valor de $s4 for diferente de 0, vai para o label 'loopFinal'
+	sw s1, 0(s7)		# salva o que esta em $s1 no endereço 0($s7)
+	j final			# sem condição ele vai para o label 'final'
+
+loopFinal:
+	sw s6, 0(s7)		# salva o valor que esta em $s6 no endereço 0($s7)
+
+final:
+	li a7, 4 		# chama serviço 4
+	la a0, mostraC		# mostra mensagem 'mostraC' na tela
+	ecall
+	li a7, 1		# chama serviço 1
+	mv a0, s2		# mostra inteiro na tela
+	ecall
+	li a7, 4		# chama serviço 4
+	la a0, colchetes	# mostra mensagem 'colchetes' na tela
+	ecall
+	lw t8, 0(s7)    	# carregar o valor do s7 em t8.
+	li a7, 1		# chama serviço 1
+	mv a0, t8		# mostra inteiro na tela
+	ecall
+	addi s2, s2, 1		# soma $s2 + 1 e armazena em $s2
+	beq s2, t2, exit	# se o valor de $s2 = $t2 vai para o label 'exit'
+	j loopC
+	
+exit: nop			# finaliza

@@ -1,0 +1,37 @@
+# Disciplina: Arquitetura e Organização de Processadores
+# Atividade: Avaliação 03 – Procedimentos em Linguagem de Montagem
+# Exercício 01
+# Alunos: Igor do Carmo
+# 	  Vinicius Hostins Pereira
+	.data
+X: 		.asciz "Informe X: "
+Y: 		.asciz "Informe Y: "
+Resultado: 	.asciz "Resultado da soma: "
+	.text
+	j main
+	
+soma: 
+	add s0, a1, a2		# soma a1 + a2 e armazena em t0
+	jr ra			# volta para o main
+main: 
+	li a7, 4		# chama serviço 4
+	la a0, X		# mostra mensagem 'X' na tela
+	ecall
+	li a7, 5		# chama serviço 5
+	ecall
+	mv a1, a0		# armazena inteiro informado em a1
+	li a7, 4		# chama serviço 4
+	la a0, Y		# mostra mensagem 'Y' na tela
+	ecall
+	li a7, 5		# chama serviço 5
+	ecall
+	mv a2, a0		# armazena inteiro informado em a2
+	
+	jal soma		# vai para o procedimento 'soma'
+	
+	li a7, 4		# chama serviço 4
+	la a0, Resultado	# mostra mensagem 'Resultado' na tela
+	ecall
+	li a7, 1		# chama serviço 1
+	mv a0, s0		# mostra inteiro na tela
+	ecall

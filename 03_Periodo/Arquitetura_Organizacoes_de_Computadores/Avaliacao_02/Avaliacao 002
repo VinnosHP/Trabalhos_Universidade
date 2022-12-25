@@ -1,0 +1,119 @@
+# Disciplina: Arquitetura e Organização de Processadores
+# Atividade: Avaliação 02 – Programação em Linguagem de Montagem
+# Alunos: Igor do Carmo e Vinicius Hostins Pereira.
+	.data
+VetorA: 	.word 0,0,0,0,0,0,0,0
+VetorB: 	.word 0,0,0,0,0,0,0,0
+VetorC: 	.word 0,0,0,0,0,0,0,0
+leiaA: 		.asciiz "Entre com A["
+leiaB:		.asciiz "Entre com B["
+espaço: 	.asciiz ""
+colchetes: 	.asciiz "]: "
+mostraC: 	.asciiz "\n C["
+ValorVetor: 	.asciiz "qual o tamanho do vetor ? (1-8)"
+Erro: 		.asciiz "Você so pode adicionar valores de 1 até 8."
+	.text
+main:
+	la $s0, VetorA		# armazena endereço base em $s0
+	la $t0, VetorB		# armazena endereço base em $t0
+	la $t9, VetorC		# armazena endereço base em $t9
+	li $s2, 0 		# isso é a soma do i
+	#li $t2, 8 		# isso é o valor máximo (n de for).
+	li $t3, 1 		# define s6 como valor 1.
+	li $t4, 8 		# define o valor de 8.
+vetorT:
+	li $v0, 4		# chama serviço 4
+	la $a0, ValorVetor 	# carrega a mensagem.
+	syscall
+	li $v0, 5		# chama serviço 5
+	syscall
+	move $t2, $v0 		# armazena inteiro informado
+	blt $t2, $t3, erro	
+	bgt $t2, $t4, erro 	# se o valor for maior que 8 ou menor que 1 imprime a msg de erro.
+	j loopA
+erro:	
+	li $v0, 4		# chama serviço 4
+	la $a0, Erro		# carrega mensagem 'Erro'
+	syscall
+	j vetorT		# volta para o label 'vetorT'
+loopA:
+	li $v0, 4		# chama serviço 4
+	la $a0, leiaA 		# carrega mensagem 'leiaA' na tela
+	syscall
+	li $v0, 1		# chama serviço 1
+	move $a0, $s2		# carrega inteiro na tela
+	syscall
+	li $v0 4		# chama serviço 4
+	la $a0, colchetes 	# carregar a mensagem 'colchetes' na tela
+	syscall
+	add $v1, $s2, $s2
+	add $v1, $v1, $v1 	# soma do relativo com o absoluto e base.
+	add $v1, $v1, $s0
+	lw $s1, 0($v1)
+	li $v0, 5 		# chama serviço 5
+	syscall
+	move $s3, $v0		# armazena o inteiro informado em $s3
+	sw $s3, 0($v1) 		# salva o valor de $s3 no endereço 0($v1)
+	addi $s2, $s2, 1
+	bne $s2, $t2, loopA 	# se $s2 e $t2 forem diferente volta para o label 'loopA'
+	li $s2, 0 		# volta o valor de i para 0.
+	li $v0, 4		# chama serviço 4
+	la $a0, espaço		# carrega mensagem 'espaço' na tela
+	syscall
+loopB:
+	li $v0, 4		# chama serviço 4
+	la $a0, leiaB 		# carrega a mensagem 'leiaB' na tela
+	syscall
+	li $v0, 1		# chama serviço 1
+	move $a0, $s2		# carrega inteiro na tela
+	syscall
+	li $v0 4		# chama serviço 4
+	la $a0, colchetes 	# carregar a mensagem 'colchetes' na tela
+	syscall
+	add $v1, $s2, $s2
+	add $v1, $v1, $v1 	# soma do relativo com o absolut e base.
+	add $v1, $v1, $t0
+	lw $s1, 0($v1)		# armazena o valor do endereço 0($v1) em $s1
+	li $v0, 5 		# chama serviço 5
+	syscall
+	move $s3, $v0		# armazena inteiro informado em $s3
+	sw $s3, 0($v1) 		# armazena o valor de $s3 no endereço 0($v1)
+	addi $s2, $s2, 1
+	bne $s2, $t2, loopB 	# se $s2 e $t2 forem diferentes volta para o label 'loopB'
+	li $s2, 0 		# volta o valor de i para 0.
+loopC:
+	add $v1, $s2, $s2
+	add $v1, $v1, $v1 	# soma do relativo com o absoluto e base.
+	add $v1, $v1, $s0
+	lw $s1, 0($v1)
+	add $s5, $s2, $s2
+	add $s5, $s5, $s5 	# soma do relativo com o absoluto e base.
+	add $s5, $s5, $t0
+	lw $s6, 0($s5)
+	slt $s4, $s1, $s6 	# se s1 for menor s6 entao s4 = 1 senao s4 igual a 0.
+	add $s7, $s2, $s2
+	add $s7, $s7, $s7 	# soma do relativo com o absolut e base.
+	add $s7, $s7, $t9
+	bne $s4, 0, loopFinal	# se $s4 for diferente de 0 vai para o label 'loopFinal'
+	sw $s1, 0($s7)		# armazena o valor de $s1 no endereço 0($s7)
+	j final
+loopFinal:
+	sw $s6, 0($s7)		# armazena o valor de $s6 no endereço 0($s7)
+final:
+	li $v0, 4		# chama serviço 4
+	la $a0, mostraC 	# carrega a mensagem 'mostraC' na tela
+	syscall
+	li $v0, 1		# chama serviço 1
+	move $a0, $s2	 	# carrega inteiro na tela
+	syscall
+	li $v0, 4		# chama serviço 4
+	la $a0, colchetes 	# carrega a mensagem 'colchetes' na tela
+	syscall
+	lw $t8, 0($s7) 		# armazena o valor do endereço 0($s7) em $t8
+	li $v0, 1		# chama serviço 1
+	move $a0, $t8		# carrega inteiro na tela
+	syscall
+	addi $s2, $s2, 1 	# somando para mais um indicie.
+	beq $s2,$t2, exit 	# se $s2 = $t2 vai para o label 'exit'
+	j loopC
+exit: nop

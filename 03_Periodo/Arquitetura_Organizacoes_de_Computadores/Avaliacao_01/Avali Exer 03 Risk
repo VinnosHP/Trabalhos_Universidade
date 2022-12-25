@@ -1,0 +1,65 @@
+# Disciplina: Arquitetura e Organização de Processadores
+# Atividade: Avaliação 01 – Programação em Linguagem de Montagem
+# Exercício 03
+# Alunos: Vinicius Hostins Pereira e Igor do Carmo
+	.data
+leitura:	.asciz "lEITURA DOS ELEMENTOS DO VETOR:\n"
+apresentacao: 	.asciz "\nAPRESENTAÇÃO DO VETOR LIDO:"
+leiaA:		.asciz "Entre com A["
+colchetes: 	.asciz "]: "
+mostraA: 	.asciz "\nA["
+vetorA: 	.align 2
+		.space 32
+
+	.text
+main:
+	mv t0,zero
+    	mv t1,zero
+    	li t2,32
+    	li a7,4
+    	la a0,leitura
+    	ecall
+
+loopDeLeitura:
+	beq t0,t2,exitLoop
+	li a7,4		
+	la a0,leiaA
+	ecall
+	li a7,1		
+	mv a0,t1		
+	ecall
+	li a7,4
+	la a0,colchetes
+	ecall
+	li a7,5		
+	ecall
+	mv s0,a7
+	sw s0,vetorA(t0)
+	addi t0,t0,4
+	addi t1,t1,1
+	j loopDeLeitura
+exitLoop:
+	mv t0,zero
+	mv t1,zero
+	li a7,4
+    	la a0,apresentacao
+    	ecall
+mostra:
+	beq t0,t2, exit
+	li a7,4		
+	la a0,mostraA
+	ecall
+	li a7,1
+	mv a0,t1
+	ecall
+	li a7,4
+	la a0,colchetes
+	ecall
+	li a7,1
+	lw a0,vetorA(t0)
+	ecall
+		
+	addi t1,t1,1
+	addi t0,t0,4
+	j mostra
+exit: nop

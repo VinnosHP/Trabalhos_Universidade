@@ -1,0 +1,65 @@
+# Disciplina: Arquitetura e Organização de Processadores
+# Atividade: Avaliação 01 – Programação em Linguagem de Montagem
+# Exercício 03
+# Alunos: Vinicius Hostins Pereira e Igor do Carmo
+	.data
+vetorA: 	.space 32
+leitura:	.asciiz "lEITURA DOS ELEMENTOS DO VETOR:\n"
+apresentacao: 	.asciiz "\nAPRESENTAÇÃO DO VETOR LIDO:"
+leiaA:		.asciiz "Entre com A["
+colchetes: 	.asciiz "]: "
+mostraA: 	.asciiz "\nA["
+#vetorA: 	.space 32
+
+	.text
+main:
+	move $t0,$0		# define $t0 = 0
+    	move $t1,$0		# define $t1 = 0
+    	li $t2,32		# define $t2 = 32
+    	li $v0,4		# chama serviço 4 para mostrar mensagem
+    	la $a0,leitura		# carrega mensagem 'leitura'
+    	syscall
+
+loopDeLeitura:
+	beq $t0,$t2,exitLoop	# se $t0 = $t2 vai para o label'exitLoop
+	li $v0,4		# chama serviço 4 para mostrar mensagem
+	la $a0,leiaA		# carrega mensagem 'leiaA'
+	syscall
+	li $v0,1		# chama serviço 1 para mostrar inteiro
+	move $a0,$t1		# carrega inteiro na tela
+	syscall
+	li $v0,4		# chama serviço 4 para mostrar mensagem
+	la $a0,colchetes	# carrega mensagem 'colchetes'
+	syscall
+	li $v0,5		# chama serviço 5 para ler um inteiro
+	syscall
+	move $s0,$v0		# armazena inteio em $s0
+	sw $s0, vetorA($t0)	# salva o $s0 em vetorA, o $t0 é o endereço
+ 	addi $t0,$t0,4		# soma $t0 + 4 e armazena em $t0
+	addi $t1,$t1,1		# soma $t1 + 1 e armazena em $t1
+	j loopDeLeitura		# volta para o label 'loopDeLeitura'
+exitLoop:
+	move $t0,$0		# zera o registrador $t0
+	move $t1,$0		# zera o registrador $t1
+	li $v0,4		# chama serviço 4 para mostrar mensagem
+    	la $a0,apresentacao	# carrega mensagem 'apresentação'
+    	syscall
+mostra:
+	beq $t0,$t2, exit	# se $t0 = $t2 vai para o label'exit'
+	li $v0,4		# chama serviço 4 para mostrar mensagem
+	la $a0,mostraA		# carrega mensagem 'mostraA'
+	syscall
+	li $v0,1		# chama serviço 1 para mostrar inteiro
+	move $a0,$t1		# carrega inteiro na tela
+	syscall
+	li $v0,4		# chama serviço 4 para mostrar mensagem
+	la $a0,colchetes	# carrega mensagem 'colchetes'
+	syscall
+	li $v0,1		# chama serviço 1 para mostrar inteiro
+	lw $a0,vetorA($t0)	# carrega o inteiro que esta em vetorA($t0) e armazena em $a0
+	syscall
+		
+	addi $t1,$t1,1		# soma $t0 + 4 e armazena em $t0
+	addi $t0,$t0,4		# soma $t1 + 1 e armazena em $t1
+	j mostra		# volta para o label 'mostra'
+exit: nop			# finaliza 

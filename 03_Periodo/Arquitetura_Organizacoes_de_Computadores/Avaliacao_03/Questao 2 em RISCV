@@ -1,0 +1,45 @@
+# Disciplina: Arquitetura e Organização de Processadores
+# Atividade: Avaliação 03 – Procedimentos em Linguagem de Montagem
+# Exercício 02
+# Alunos: Igor do Carmo
+# 	  Vinicius Hostins Pereira
+	.data
+Resultado: .asciz "Resultado da soma: "
+	.text
+	j main
+soma:
+	li sp, -12		# diminui 12 no sp, assim a pilha aumenta, reserva espaço para 3 words
+	sw s2, 8(sp)		# salva o valor que tem em s2 na pilha
+	sw s1, 4(sp)		# salva o valor que tem em s1 na pilha
+	sw s0, 0(sp)		# salva o valor que tem em s0 na pilha
+	
+	mv a1, s0		# define a1 = s0
+	mv a2, s1		# define a2 = s1
+	mv a3, s2		# define a3 = s2
+	
+	add t0, a1, a2		# soma a1 + a2 e armazena em t0
+	add t0, t0, a3		# soma t0 + a3 e armazena em t0
+	
+	jr ra			# volta para o 'main'
+main:
+	li s0, 7		# define s0 = 7
+	li s1, 8		# define s1 = 8
+	li s2, 9		# define s2 = 9
+	
+	# mv a1, s0
+	# mv a2, s1
+	# mv a3, s2
+	
+	jal soma		# pula para o procedimento 'soma'
+	
+	lw s0, 0(sp)		# recupera o valor de s0 que estava salvo da pilha
+	lw s1, 4(sp)		# recupera o valor de s1 que estava salvo da pilha
+	lw s2, 8(sp)		# recupera o valor de s2 que estava salvo da pilha
+	li sp, 12		# soma 12 no sp, assim a pilha diminui, voltando ao tamanho normal
+	
+	li a7, 4		# chama serviço 4
+	la a0, Resultado	# mostra mensagem 'Resultado' na tela
+	ecall
+	li a7, 1		# chama serviço 1
+	mv a0, t0		# mostra inteiro na tela
+	ecall

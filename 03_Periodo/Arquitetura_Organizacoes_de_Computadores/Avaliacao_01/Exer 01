@@ -1,0 +1,36 @@
+# Disciplina: Arquitetura e Organização de Processadores
+# Atividade: Avaliação 01 – Programação em Linguagem de Montagem
+# Exercício 01
+# Alunos: Vinicius Hostins Pereira e Igor do Carmo
+	.data 
+	
+X: 	.asciiz "\nEntre com o valor de X: "
+Y: 	.asciiz "\nEntre com o valor de Y: "
+Soma: 	.asciiz "\nA soma de X e Y é igual a: "
+	
+	.text 
+	
+main:
+	li $v0, 4		# carrega serviço 4 para mostrar mensagem
+	la $a0, X		# mostra mensagem X na tela
+	syscall
+	li $v0, 5		# carrega serviço 5 para leitura de uma inteiro
+	syscall
+	move $s0, $v0		# salva inteiro em $s0
+	
+	li $v0, 4		# carrega serviço 4 para mostrar mensagem
+	la $a0, Y		# mostra mensagem Y na tela
+	syscall
+	li $v0, 5		# carrega serviço 5 para leitura de uma inteiro
+	syscall
+	move $s1, $v0		# salva inteiro em $s1
+	
+	add $t0, $s0, $s1	# soma $s0 e $s1 e armazena em $t0
+	
+	li $v0, 4		# carrega serviço 4 para mostrar mensagem
+	la $a0, Soma		# mostra mensagem Soma na tela
+	syscall
+	li $v0, 1		# carrega serviço 1 para mostrar inteiro na tela
+	move $a0, $t0		# carrega inteiro em $a0
+	syscall
+	
